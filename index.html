@@ -1,274 +1,289 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Uber Gestor — Gestão do Motorista</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="app.css" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#0d0f14" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Rota Certa" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>Uber Gestor — Gestão do Motorista</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="app.css" />
 </head>
+
 <body>
 
-<!-- ═══════════════════════════════════ LOGIN ═══════════════════════════════════ -->
-<div id="screen-login" class="screen active">
-  <div class="login-bg">
-    <div class="login-glow"></div>
-    <div class="grid-lines"></div>
-  </div>
-  <div class="login-card">
-    <div class="brand">
-      <span class="brand-icon">🚗</span>
-      <h1>Uber Gestor</h1>
-      <p>Gestão inteligente para motoristas</p>
+    <!-- ═══════════════════════════════════ LOGIN ═══════════════════════════════════ -->
+    <div id="screen-login" class="screen active">
+        <div class="login-bg">
+            <div class="login-glow"></div>
+            <div class="grid-lines"></div>
+        </div>
+        <div class="login-card">
+            <div class="brand">
+                <span class="brand-icon">🚗</span>
+                <h1>Uber Gestor</h1>
+                <p>Gestão inteligente para motoristas</p>
+            </div>
+            <div class="form-group">
+                <label>Usuário</label>
+                <input type="text" id="inp-user" placeholder="seu usuário" autocomplete="username" />
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="inp-pass" placeholder="••••••••" autocomplete="current-password" />
+            </div>
+            <div id="login-error" class="error-msg hidden">Usuário ou senha incorretos.</div>
+            <button class="btn-primary" id="btn-login" onclick="doLogin()">
+                <span>Entrar</span><span class="btn-arrow">→</span>
+            </button>
+            <p class="login-hint">Não tem conta? Peça ao administrador.</p>
+        </div>
     </div>
-    <div class="form-group">
-      <label>Usuário</label>
-      <input type="text" id="inp-user" placeholder="seu usuário" autocomplete="username" />
+
+    <!-- ═══════════════════════════════════ APP ═══════════════════════════════════ -->
+    <div id="screen-app" class="screen hidden">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <span class="topbar-logo">🚗</span>
+                <span class="topbar-title">Uber Gestor</span>
+            </div>
+            <div class="topbar-right">
+                <span id="topbar-user" class="topbar-user"></span>
+                <button class="btn-icon" onclick="doLogout()" title="Sair">⏻</button>
+            </div>
+        </header>
+
+        <!-- NAV BOTTOM -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">
+                <span class="nav-icon">📊</span><span class="nav-label">Painel</span>
+            </button>
+            <button class="nav-btn" data-tab="nova-corrida" onclick="switchTab('nova-corrida')">
+                <span class="nav-icon">➕</span><span class="nav-label">Corrida</span>
+            </button>
+            <button class="nav-btn" data-tab="lancamentos" onclick="switchTab('lancamentos')">
+                <span class="nav-icon">💸</span><span class="nav-label">Gastos</span>
+            </button>
+            <button class="nav-btn" data-tab="historico" onclick="switchTab('historico')">
+                <span class="nav-icon">📋</span><span class="nav-label">Histórico</span>
+            </button>
+        </nav>
+
+        <!-- CONTENT -->
+        <main class="main-content">
+
+            <!-- ── DASHBOARD ── -->
+            <section id="tab-dashboard" class="tab-content active">
+                <div class="section-header">
+                    <h2>Painel do Dia</h2>
+                    <div class="date-selector">
+                        <select id="dash-mes" onchange="loadDashboard()"></select>
+                        <select id="dash-ano" onchange="loadDashboard()"></select>
+                    </div>
+                </div>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card accent-green">
+                        <div class="kpi-icon">💰</div>
+                        <div class="kpi-value" id="kpi-bruto">R$ 0,00</div>
+                        <div class="kpi-label">Receita Bruta</div>
+                    </div>
+                    <div class="kpi-card accent-red">
+                        <div class="kpi-icon">🔻</div>
+                        <div class="kpi-value" id="kpi-gastos">R$ 0,00</div>
+                        <div class="kpi-label">Total de Gastos</div>
+                    </div>
+                    <div class="kpi-card accent-blue">
+                        <div class="kpi-icon">✨</div>
+                        <div class="kpi-value" id="kpi-liquido">R$ 0,00</div>
+                        <div class="kpi-label">Lucro Líquido</div>
+                    </div>
+                    <div class="kpi-card accent-orange">
+                        <div class="kpi-icon">⭐</div>
+                        <div class="kpi-value" id="kpi-bonus">R$ 0,00</div>
+                        <div class="kpi-label">Bonificações</div>
+                    </div>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Ganho / KM</div>
+                        <div class="stat-value" id="stat-ganho-km">— </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Custo / KM</div>
+                        <div class="stat-value" id="stat-custo-km">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Ganho / Hora</div>
+                        <div class="stat-value" id="stat-ganho-hora">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">KM Rodados</div>
+                        <div class="stat-value" id="stat-km-total">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Horas Trab.</div>
+                        <div class="stat-value" id="stat-horas">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Corridas</div>
+                        <div class="stat-value" id="stat-corridas">—</div>
+                    </div>
+                </div>
+
+                <div class="breakdown-card">
+                    <h3>Detalhamento de Gastos</h3>
+                    <div class="breakdown-list" id="breakdown-list">
+                        <div class="empty-state">Nenhum dado para o período.</div>
+                    </div>
+                </div>
+
+                <div class="loading-overlay hidden" id="dash-loading">
+                    <div class="spinner"></div><span>Carregando...</span>
+                </div>
+            </section>
+
+            <!-- ── NOVA CORRIDA ── -->
+            <section id="tab-nova-corrida" class="tab-content hidden">
+                <div class="section-header">
+                    <h2>Registrar Corrida</h2>
+                </div>
+                <div class="form-card">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Data</label>
+                            <input type="date" id="corrida-data" />
+                        </div>
+                        <div class="form-group">
+                            <label>Plataforma</label>
+                            <select id="corrida-plataforma">
+                                <option>Uber</option>
+                                <option>99</option>
+                                <option>inDrive</option>
+                                <option>Outros</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Valor Recebido (R$)</label>
+                            <input type="number" id="corrida-valor" placeholder="0,00" step="0.01" min="0" />
+                        </div>
+                        <div class="form-group">
+                            <label>KM Percorridos</label>
+                            <input type="number" id="corrida-km" placeholder="0" step="0.1" min="0" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Hora Início</label>
+                            <input type="time" id="corrida-inicio" />
+                        </div>
+                        <div class="form-group">
+                            <label>Hora Fim</label>
+                            <input type="time" id="corrida-fim" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Bonificação (R$) <span class="optional">opcional</span></label>
+                        <input type="number" id="corrida-bonus" placeholder="0,00" step="0.01" min="0" />
+                    </div>
+                    <div class="form-group">
+                        <label>Observação <span class="optional">opcional</span></label>
+                        <input type="text" id="corrida-obs" placeholder="ex: surge, promoção..." />
+                    </div>
+                    <button class="btn-primary full" onclick="salvarCorrida()">
+                        <span>Salvar Corrida</span><span class="btn-arrow">✓</span>
+                    </button>
+                    <div id="corrida-status" class="status-msg hidden"></div>
+                </div>
+            </section>
+
+            <!-- ── LANÇAMENTOS / GASTOS ── -->
+            <section id="tab-lancamentos" class="tab-content hidden">
+                <div class="section-header">
+                    <h2>Registrar Gasto</h2>
+                </div>
+                <div class="form-card">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Data</label>
+                            <input type="date" id="gasto-data" />
+                        </div>
+                        <div class="form-group">
+                            <label>Categoria</label>
+                            <select id="gasto-categoria">
+                                <option value="Combustível">⛽ Combustível</option>
+                                <option value="Manutenção">🔧 Manutenção</option>
+                                <option value="Alimentação">🍽️ Alimentação</option>
+                                <option value="Lavagem">🚿 Lavagem</option>
+                                <option value="Seguro">🛡️ Seguro</option>
+                                <option value="Documentação">📄 Documentação</option>
+                                <option value="Aplicativo">📱 Taxa do App</option>
+                                <option value="Outros">📦 Outros</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Valor (R$)</label>
+                            <input type="number" id="gasto-valor" placeholder="0,00" step="0.01" min="0" />
+                        </div>
+                        <div class="form-group">
+                            <label>KM no Momento <span class="optional">opcional</span></label>
+                            <input type="number" id="gasto-km" placeholder="ex: 45200" min="0" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descrição <span class="optional">opcional</span></label>
+                        <input type="text" id="gasto-desc" placeholder="ex: troca de óleo, almoço..." />
+                    </div>
+                    <button class="btn-primary full" onclick="salvarGasto()">
+                        <span>Salvar Gasto</span><span class="btn-arrow">✓</span>
+                    </button>
+                    <div id="gasto-status" class="status-msg hidden"></div>
+                </div>
+            </section>
+
+            <!-- ── HISTÓRICO ── -->
+            <section id="tab-historico" class="tab-content hidden">
+                <div class="section-header">
+                    <h2>Histórico</h2>
+                    <div class="date-selector">
+                        <select id="hist-mes"></select>
+                        <select id="hist-ano"></select>
+                    </div>
+                </div>
+                <div class="hist-tabs">
+                    <button class="hist-tab active" onclick="switchHistTab('corridas')">Corridas</button>
+                    <button class="hist-tab" onclick="switchHistTab('gastos')">Gastos</button>
+                </div>
+                <button class="btn-secondary full" onclick="loadHistorico()">🔄 Carregar</button>
+                <div id="hist-list" class="hist-list">
+                    <div class="empty-state">Selecione o período e clique em Carregar.</div>
+                </div>
+                <div class="loading-overlay hidden" id="hist-loading">
+                    <div class="spinner"></div><span>Carregando...</span>
+                </div>
+            </section>
+
+        </main>
     </div>
-    <div class="form-group">
-      <label>Senha</label>
-      <input type="password" id="inp-pass" placeholder="••••••••" autocomplete="current-password" />
-    </div>
-    <div id="login-error" class="error-msg hidden">Usuário ou senha incorretos.</div>
-    <button class="btn-primary" id="btn-login" onclick="doLogin()">
-      <span>Entrar</span><span class="btn-arrow">→</span>
-    </button>
-    <p class="login-hint">Não tem conta? Peça ao administrador.</p>
-  </div>
-</div>
 
-<!-- ═══════════════════════════════════ APP ═══════════════════════════════════ -->
-<div id="screen-app" class="screen hidden">
+    <!-- TOAST -->
+    <div id="toast" class="toast hidden"></div>
 
-  <!-- TOPBAR -->
-  <header class="topbar">
-    <div class="topbar-left">
-      <span class="topbar-logo">🚗</span>
-      <span class="topbar-title">Uber Gestor</span>
-    </div>
-    <div class="topbar-right">
-      <span id="topbar-user" class="topbar-user"></span>
-      <button class="btn-icon" onclick="doLogout()" title="Sair">⏻</button>
-    </div>
-  </header>
-
-  <!-- NAV BOTTOM -->
-  <nav class="bottom-nav">
-    <button class="nav-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">
-      <span class="nav-icon">📊</span><span class="nav-label">Painel</span>
-    </button>
-    <button class="nav-btn" data-tab="nova-corrida" onclick="switchTab('nova-corrida')">
-      <span class="nav-icon">➕</span><span class="nav-label">Corrida</span>
-    </button>
-    <button class="nav-btn" data-tab="lancamentos" onclick="switchTab('lancamentos')">
-      <span class="nav-icon">💸</span><span class="nav-label">Gastos</span>
-    </button>
-    <button class="nav-btn" data-tab="historico" onclick="switchTab('historico')">
-      <span class="nav-icon">📋</span><span class="nav-label">Histórico</span>
-    </button>
-  </nav>
-
-  <!-- CONTENT -->
-  <main class="main-content">
-
-    <!-- ── DASHBOARD ── -->
-    <section id="tab-dashboard" class="tab-content active">
-      <div class="section-header">
-        <h2>Painel do Dia</h2>
-        <div class="date-selector">
-          <select id="dash-mes" onchange="loadDashboard()"></select>
-          <select id="dash-ano" onchange="loadDashboard()"></select>
-        </div>
-      </div>
-
-      <div class="kpi-grid">
-        <div class="kpi-card accent-green">
-          <div class="kpi-icon">💰</div>
-          <div class="kpi-value" id="kpi-bruto">R$ 0,00</div>
-          <div class="kpi-label">Receita Bruta</div>
-        </div>
-        <div class="kpi-card accent-red">
-          <div class="kpi-icon">🔻</div>
-          <div class="kpi-value" id="kpi-gastos">R$ 0,00</div>
-          <div class="kpi-label">Total de Gastos</div>
-        </div>
-        <div class="kpi-card accent-blue">
-          <div class="kpi-icon">✨</div>
-          <div class="kpi-value" id="kpi-liquido">R$ 0,00</div>
-          <div class="kpi-label">Lucro Líquido</div>
-        </div>
-        <div class="kpi-card accent-orange">
-          <div class="kpi-icon">⭐</div>
-          <div class="kpi-value" id="kpi-bonus">R$ 0,00</div>
-          <div class="kpi-label">Bonificações</div>
-        </div>
-      </div>
-
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-label">Ganho / KM</div>
-          <div class="stat-value" id="stat-ganho-km">— </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Custo / KM</div>
-          <div class="stat-value" id="stat-custo-km">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Ganho / Hora</div>
-          <div class="stat-value" id="stat-ganho-hora">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">KM Rodados</div>
-          <div class="stat-value" id="stat-km-total">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Horas Trab.</div>
-          <div class="stat-value" id="stat-horas">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Corridas</div>
-          <div class="stat-value" id="stat-corridas">—</div>
-        </div>
-      </div>
-
-      <div class="breakdown-card">
-        <h3>Detalhamento de Gastos</h3>
-        <div class="breakdown-list" id="breakdown-list">
-          <div class="empty-state">Nenhum dado para o período.</div>
-        </div>
-      </div>
-
-      <div class="loading-overlay hidden" id="dash-loading">
-        <div class="spinner"></div><span>Carregando...</span>
-      </div>
-    </section>
-
-    <!-- ── NOVA CORRIDA ── -->
-    <section id="tab-nova-corrida" class="tab-content hidden">
-      <div class="section-header"><h2>Registrar Corrida</h2></div>
-      <div class="form-card">
-        <div class="form-row">
-          <div class="form-group">
-            <label>Data</label>
-            <input type="date" id="corrida-data" />
-          </div>
-          <div class="form-group">
-            <label>Plataforma</label>
-            <select id="corrida-plataforma">
-              <option>Uber</option>
-              <option>99</option>
-              <option>inDrive</option>
-              <option>Outros</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Valor Recebido (R$)</label>
-            <input type="number" id="corrida-valor" placeholder="0,00" step="0.01" min="0" />
-          </div>
-          <div class="form-group">
-            <label>KM Percorridos</label>
-            <input type="number" id="corrida-km" placeholder="0" step="0.1" min="0" />
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Hora Início</label>
-            <input type="time" id="corrida-inicio" />
-          </div>
-          <div class="form-group">
-            <label>Hora Fim</label>
-            <input type="time" id="corrida-fim" />
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Bonificação (R$) <span class="optional">opcional</span></label>
-          <input type="number" id="corrida-bonus" placeholder="0,00" step="0.01" min="0" />
-        </div>
-        <div class="form-group">
-          <label>Observação <span class="optional">opcional</span></label>
-          <input type="text" id="corrida-obs" placeholder="ex: surge, promoção..." />
-        </div>
-        <button class="btn-primary full" onclick="salvarCorrida()">
-          <span>Salvar Corrida</span><span class="btn-arrow">✓</span>
-        </button>
-        <div id="corrida-status" class="status-msg hidden"></div>
-      </div>
-    </section>
-
-    <!-- ── LANÇAMENTOS / GASTOS ── -->
-    <section id="tab-lancamentos" class="tab-content hidden">
-      <div class="section-header"><h2>Registrar Gasto</h2></div>
-      <div class="form-card">
-        <div class="form-row">
-          <div class="form-group">
-            <label>Data</label>
-            <input type="date" id="gasto-data" />
-          </div>
-          <div class="form-group">
-            <label>Categoria</label>
-            <select id="gasto-categoria">
-              <option value="Combustível">⛽ Combustível</option>
-              <option value="Manutenção">🔧 Manutenção</option>
-              <option value="Alimentação">🍽️ Alimentação</option>
-              <option value="Lavagem">🚿 Lavagem</option>
-              <option value="Seguro">🛡️ Seguro</option>
-              <option value="Documentação">📄 Documentação</option>
-              <option value="Aplicativo">📱 Taxa do App</option>
-              <option value="Outros">📦 Outros</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Valor (R$)</label>
-            <input type="number" id="gasto-valor" placeholder="0,00" step="0.01" min="0" />
-          </div>
-          <div class="form-group">
-            <label>KM no Momento <span class="optional">opcional</span></label>
-            <input type="number" id="gasto-km" placeholder="ex: 45200" min="0" />
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Descrição <span class="optional">opcional</span></label>
-          <input type="text" id="gasto-desc" placeholder="ex: troca de óleo, almoço..." />
-        </div>
-        <button class="btn-primary full" onclick="salvarGasto()">
-          <span>Salvar Gasto</span><span class="btn-arrow">✓</span>
-        </button>
-        <div id="gasto-status" class="status-msg hidden"></div>
-      </div>
-    </section>
-
-    <!-- ── HISTÓRICO ── -->
-    <section id="tab-historico" class="tab-content hidden">
-      <div class="section-header">
-        <h2>Histórico</h2>
-        <div class="date-selector">
-          <select id="hist-mes"></select>
-          <select id="hist-ano"></select>
-        </div>
-      </div>
-      <div class="hist-tabs">
-        <button class="hist-tab active" onclick="switchHistTab('corridas')">Corridas</button>
-        <button class="hist-tab" onclick="switchHistTab('gastos')">Gastos</button>
-      </div>
-      <button class="btn-secondary full" onclick="loadHistorico()">🔄 Carregar</button>
-      <div id="hist-list" class="hist-list">
-        <div class="empty-state">Selecione o período e clique em Carregar.</div>
-      </div>
-      <div class="loading-overlay hidden" id="hist-loading">
-        <div class="spinner"></div><span>Carregando...</span>
-      </div>
-    </section>
-
-  </main>
-</div>
-
-<!-- TOAST -->
-<div id="toast" class="toast hidden"></div>
-
-<script src="app.js"></script>
+    <script src="app.js"></script>
 </body>
+
 </html>

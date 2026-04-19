@@ -380,3 +380,7 @@ document.addEventListener("keydown", e => {
     if (!loginScreen.classList.contains("hidden")) doLogin();
   }
 });
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js');
+}
