@@ -4,7 +4,7 @@
 ═══════════════════════════════════════════════════════ */
 
 // !! ALTERE ESTA URL PARA A URL DO SEU APPS SCRIPT PUBLICADO !!
-const API_URL = "https://script.google.com/macros/s/AKfycbx2EkYWphlAaBAQ4bC1_koi4NdIAdEeFDQumNJdbhIMqXCSq2Ws0mX1zmw6n76J42nc/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyn6ufpiJk1OjwJd0N2GtLgW6OLalb1Wx9juwMtyZUvR725AkX_WPMhXW0W2yYKYpLr/exec";
 
 // ── Estado global ──
 let currentUser  = null;
