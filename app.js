@@ -359,8 +359,11 @@ function clearForm(ids) {
 
 function formatDate(dateStr) {
   if (!dateStr) return "";
-  const [y, m, d] = dateStr.split("-");
-  return d ? `${d}/${m}/${y}` : dateStr;
+  // pega só os primeiros 10 caracteres "2026-04-20"
+  const clean = String(dateStr).substring(0, 10);
+  const parts = clean.split("-");
+  if (parts.length !== 3) return dateStr;
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
 
 function toast(msg, type) {
